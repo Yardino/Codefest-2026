@@ -52,9 +52,13 @@ ob_start();
 include $pageFile;
 $content = ob_get_clean();
 
+ob_start();
+include __DIR__ . '/app/layouts/notification.php';
+$notificationMarkup = ob_get_clean();
+
 if ($isAjax) {
     // Return only the content for AJAX requests
-    echo $content;
+    echo $notificationMarkup . $content;
     exit;
 }
 ?>
@@ -71,6 +75,7 @@ if ($isAjax) {
 
   <!-- Dynamic Navbar -->
   <?php include 'app/layouts/navbar.php'; ?>
+  <?= $notificationMarkup ?>
 
   <!-- Main content --> 
   <main id="main-content" class="flex-1 flex items-center justify-center p-6 pb-20 md:pb-6">
