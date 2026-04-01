@@ -14,7 +14,7 @@ $result = registerUser($_POST);
 if ($result['success']) {
     echo json_encode([
         'success' => true,
-        'redirect' => 'index.php?page=home',
+        'redirect' => 'index.php?page=dashboard',
         'user' => $result['user']
     ]);
 } else {

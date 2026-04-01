@@ -14,8 +14,9 @@ require_once __DIR__ . '/server/auth.php';
 
 dbInit();
 
-$page = $_GET['page'] ?? 'home'; // default page
+$page = $_GET['page'] ?? 'dashboard'; // default page
 $id   = $_GET['id'] ?? null;
+$isLoggedIn = isset($_SESSION['user']);
 
 // Sanitize page to prevent directory traversal
 $page = basename($page);
@@ -71,23 +72,21 @@ if ($isAjax) {
   <title>My Project</title>
   <link href="app/assets/output.css" rel="stylesheet">
 </head>
-<body class="flex flex-col min-h-screen bg-base-100 text-base-content">
+<body class="min-h-screen bg-base-200 text-base-content">
+  <div class="app-layout <?= $isLoggedIn ? 'app-layout--with-sidebar' : 'app-layout--guest' ?>">
+    <!-- Dynamic Navbar -->
+    <?php include 'app/layouts/navbar.php'; ?>
+    <?= $notificationMarkup ?>
 
-  <!-- Dynamic Navbar -->
-  <?php include 'app/layouts/navbar.php'; ?>
-  <?= $notificationMarkup ?>
-
-  <!-- Main content --> 
-  <main id="main-content" class="flex-1 flex items-center justify-center p-6 pb-20 md:pb-6">
-    <?= $content ?>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer footer-center p-4 bg-base-200 text-base-content">
-    <div>
-      <p>© 2026 My Project. All rights reserved.</p>
+    <div class="app-layout__body">
+      <!-- Main content --> 
+      <div class="app-workspace">
+        <main id="main-content" class="app-main w-full min-w-0">
+          <?= $content ?>
+        </main>
+      </div>
     </div>
-  </footer>
+  </div>
 
 </body>
 </html>

@@ -2,191 +2,439 @@
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
+
 $user = $_SESSION['user'] ?? null;
+$rawRole = strtolower((string) ($user['role'] ?? 'guest'));
+$roleAliases = [
+    'user' => 'operator',
+    'admin' => 'beheerder',
+    'administrator' => 'beheerder',
+];
+$role = $roleAliases[$rawRole] ?? $rawRole;
+
+$roleLabels = [
+    'guest' => 'Gast',
+    'operator' => 'Operator',
+    'reviewer' => 'Reviewer',
+    'beheerder' => 'Beheerder',
+];
 
 $navItems = [
     'guest' => [
-        ['label'=>'Home', 'link'=>'home'],
-        ['label'=>'Login', 'link'=>'login'],
-        ['label'=>'Register', 'link'=>'register'],
-        ['label'=> 'More', 'children' => [
-                ['label'=> 'Table', 'link'=>'table'],
-                ['label'=> 'Multiform', 'link'=>'multiform']
-            ]
-        ],
-        ['label'=>'Crud', 'link'=>'crud']
+        ['label' => 'Inloggen', 'link' => 'login'],
     ],
-    'user' => [
-        ['label'=>'Home', 'link'=>'home'],
-        ['label'=>'Products', 'link'=>'products'],
-        ['label'=>'Cart', 'link'=>'cart'],
-        ['label'=>'Logout', 'link'=>'logout.php']
+    'operator' => [
+        ['label' => 'Dashboard', 'link' => 'dashboard'],
+        ['label' => 'Kandidaten', 'link' => 'candidates'],
+        ['label' => 'Divisies', 'link' => 'divisions'],
+        ['label' => 'Screening', 'link' => 'screening'],
+        ['label' => 'Toewijzingen', 'link' => 'placements'],
+        ['label' => 'Automatische run', 'link' => 'run'],
+        ['label' => 'Rapportages', 'link' => 'reports'],
+        ['label' => 'Help', 'link' => 'help'],
     ],
-    'admin' => [
-        ['label'=>'Admin Panel', 'link'=>'admin'],
-        ['label'=>'Logout', 'link'=>'logout.php']
-    ]
+    'reviewer' => [
+        ['label' => 'Dashboard', 'link' => 'dashboard'],
+        ['label' => 'Kandidaten', 'link' => 'candidates'],
+        ['label' => 'Divisies', 'link' => 'divisions'],
+        ['label' => 'Screening', 'link' => 'screening'],
+        ['label' => 'Toewijzingen', 'link' => 'placements'],
+        ['label' => 'Automatische run', 'link' => 'run'],
+        ['label' => 'Rapportages', 'link' => 'reports'],
+        ['label' => 'Auditlog', 'link' => 'auditlog'],
+        ['label' => 'Help', 'link' => 'help'],
+    ],
+    'beheerder' => [
+        ['label' => 'Dashboard', 'link' => 'dashboard'],
+        ['label' => 'Kandidaten', 'link' => 'candidates'],
+        ['label' => 'Divisies', 'link' => 'divisions'],
+        ['label' => 'Screening', 'link' => 'screening'],
+        ['label' => 'Toewijzingen', 'link' => 'placements'],
+        ['label' => 'Automatische run', 'link' => 'run'],
+        ['label' => 'Rapportages', 'link' => 'reports'],
+        ['label' => 'Auditlog', 'link' => 'auditlog'],
+        ['label' => 'Help', 'link' => 'help'],
+    ],
 ];
 
-$role = $user['role'] ?? 'guest';
 $items = $navItems[$role] ?? $navItems['guest'];
 
-// Function to get icon for a nav item
-function getNavIcon($label) {
-    $icons = [
-        'Home' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><polyline points="1 11 12 2 23 11" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><path d="m5,13v7c0,1.105.895,2,2,2h10c1.105,0,2-.895,2-2v-7" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path><line x1="12" y1="22" x2="12" y2="18" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line></g></svg>',
-        'Login' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><path d="m22,13.25v-2.5l-2.318-.966c-.167-.581-.395-1.135-.682-1.654l.954-2.318-1.768-1.768-2.318.954c-.518-.287-1.073-.515-1.654-.682l-.966-2.318h-2.5l-.966,2.318c-.581.167-1.135.395-1.654.682l-2.318-.954-1.768,1.768.954,2.318c-.287.518-.515,1.073-.682,1.654l-2.318.966v2.5l2.318.966c.167.581.395,1.135.682,1.654l-.954,2.318,1.768,1.768,2.318-.954c.518.287,1.073.515,1.654.682l.966,2.318h2.5l.966-2.318c.581-.167,1.135-.395,1.654-.682l2.318.954,1.768-1.768-.954-2.318c.287-.518.515-1.073.682-1.654l2.318-.966Z" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>',
-        'Register' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><path d="m22,13.25v-2.5l-2.318-.966c-.167-.581-.395-1.135-.682-1.654l.954-2.318-1.768-1.768-2.318.954c-.518-.287-1.073-.515-1.654-.682l-.966-2.318h-2.5l-.966,2.318c-.581.167-1.135.395-1.654.682l-2.318-.954-1.768,1.768.954,2.318c-.287.518-.515,1.073-.682,1.654l-2.318.966v2.5l2.318.966c.167.581.395,1.135.682,1.654l-.954,2.318,1.768,1.768,2.318-.954c.518.287,1.073.515,1.654.682l.966,2.318h2.5l.966-2.318c.581-.167,1.135-.395,1.654-.682l2.318.954,1.768-1.768-.954-2.318c.287-.518.515-1.073.682-1.654l2.318-.966Z" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>',
-        'Products' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><polyline points="3 14 9 14 9 17 15 17 15 14 21 14" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></rect></g></svg>',
-        'Cart' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="8" cy="21" r="2" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><circle cx="20" cy="21" r="2" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><path d="m5.67,6h16.66l-3.5,10h-13.32l-2.16-6.5c-.14-.42-.52-.7-.96-.7h-1.34" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>',
-        'Admin Panel' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><path d="m9,12l2,2 4-4m5.618-4.016A11.955,11.955 0 0112,2.944a11.955,11.955 0 01-8.618,3.04A12.02,12.02 0 003,9c0,5.591,3.824,10.29,9,11.622,5.176-1.332,9-6.03,9-11.622,0-1.042-.133-2.052-.382-3.016z" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>',
-        'More' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="12" cy="6" r="1" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><circle cx="12" cy="12" r="1" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><circle cx="12" cy="18" r="1" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle></g></svg>',
-        'Table' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></rect><line x1="3" y1="9" x2="21" y2="9" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line><line x1="3" y1="15" x2="21" y2="15" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line><line x1="9" y1="3" x2="9" y2="21" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line><line x1="15" y1="3" x2="15" y2="21" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line></g></svg>',
-        'Multiform' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><path d="m14,2h-8a2,2 0 00-2,2v16a2,2 0 002,2h12a2,2 0 002-2V8z" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path><polyline points="14 2 14 8 20 8" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="16" y1="13" x2="8" y2="13" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line><line x1="16" y1="17" x2="8" y2="17" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line><polyline points="10 9 9 9 8 9" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></polyline></g></svg>',
-        'Logout' => '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><path d="m17,7l4,4m0,0l-4,4m4-4H7m6,4v1a3,3 0 01-3,3H6a3,3 0 01-3-3V7a3,3 0 013-3h4a3,3 0 013,3v1" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>'
+$userMenuItems = [];
+if ($user) {
+    $userMenuItems = [
+        ['label' => 'Account', 'link' => 'account'],
+        ['label' => 'Beveiliging', 'link' => 'security'],
     ];
-    return $icons[$label] ?? '<svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><path d="m9,12h6m-6,4h6m2,5H7a2,2 0 01-2-2V5a2,2 0 012-2h5.586a1,1 0 01.707.293l5.414,5.414a1,1 0 01.293.707V19a2,2 0 01-2,2z" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>';
+
+    if ($role === 'beheerder') {
+        $userMenuItems[] = ['label' => 'Gebruikersbeheer', 'link' => 'users'];
+    }
+
+    $userMenuItems[] = ['label' => 'Uitloggen', 'link' => 'logout.php'];
 }
 
-// Function to extract all valid pages from navItems, including nested children
-function getAllPages($navItems) {
+function navIcon(string $label): string
+{
+    $icons = [
+        'Dashboard' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13h8V3H3zm10 8h8v-6h-8zm0-10h8V3h-8zM3 21h8v-6H3z" stroke-linejoin="round"/></svg>',
+        'Kandidaten' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke-linecap="round"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke-linecap="round"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>',
+        'Divisies' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 20V10m6 10V10"/></svg>',
+        'Screening' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+        'Toewijzingen' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round"/></svg>',
+        'Automatische run' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2l-2 7h5l-5 13 2-8H8z" stroke-linejoin="round"/></svg>',
+        'Rapportages' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        'Auditlog' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5" stroke-linecap="round"/></svg>',
+        'Help' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01" stroke-linecap="round"/></svg>',
+        'Inloggen' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3" stroke-linecap="round"/></svg>',
+        'Account activeren' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 10 3 3 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        'Account' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>',
+        'Beveiliging' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7z"/><path d="M9.5 12.5 11 14l3.5-3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        'Gebruikersbeheer' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>',
+        'Uitloggen' => '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9" stroke-linecap="round"/></svg>',
+    ];
+
+    return $icons[$label] ?? '<svg class="size-[1.05em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>';
+}
+
+function pageLinks(array $items): array
+{
     $pages = [];
-    foreach ($navItems as $item) {
-        if (isset($item['link'])) {
-            // If it's a full URL like logout.php, skip it for page validation
-            if (!preg_match('/\.php$/', $item['link'])) {
-                $pages[] = $item['link'];
-            }
+
+    foreach ($items as $item) {
+        if (!isset($item['link'])) {
+            continue;
         }
-        if (isset($item['children'])) {
-            $pages = array_merge($pages, getAllPages($item['children']));
+
+        if (!preg_match('/\.php$/', $item['link'])) {
+            $pages[] = $item['link'];
         }
     }
+
     return $pages;
 }
 
-// Function to get all nav items flat, including children
-function getAllNavItems($navItems) {
-    $items = [];
-    foreach ($navItems as $item) {
-        if (isset($item['link'])) {
-            $items[] = $item;
-        }
-        if (isset($item['children'])) {
-            $items = array_merge($items, getAllNavItems($item['children']));
-        }
-    }
-    return $items;
-}
+$currentPage = $_GET['page'] ?? 'dashboard';
+$allowedPages = array_unique(array_merge(pageLinks($items), pageLinks($userMenuItems), ['404', 'login', 'register']));
 
-if (isset($_GET['page'])) {
-    $requestedPage = $_GET['page'];
-    
-    $allowedPages = getAllPages($items);
-    $allowedPages[] = '404';
-    
-    if (!in_array($requestedPage, $allowedPages)) {
-        header('Location: index.php?page=404');
-        exit;
-    }
+if (isset($_GET['page']) && !in_array($_GET['page'], $allowedPages, true)) {
+    header('Location: index.php?page=404');
+    exit;
 }
-
-$currentPage = $_GET['page'] ?? 'home';
 ?>
 
-<!-- Desktop Navbar -->
-<div class="navbar bg-base-100 shadow-sm">
-  <div class="navbar-start">
-    <a class="btn btn-ghost text-xl text-red-500">daisyUI</a>
-  </div>
-  <div class="navbar-center hidden md:flex">
-    <ul class="menu menu-horizontal px-1">
-      <?php foreach ($items as $item): ?>
-      <?php if (isset($item['children'])): ?>
-      <li>
-        <details>
-          <summary><?php echo htmlspecialchars($item['label']); ?></summary>
-          <ul class="p-2 bg-base-100 w-40 z-1">
-      <?php foreach ($item['children'] as $child): ?>
-            <li><a href="#" onclick="navigateTo('<?php echo htmlspecialchars($child['link']); ?>'); return false;"><?php echo htmlspecialchars($child['label']); ?></a></li>
-      <?php endforeach; ?>
+<style>
+  :root {
+    --app-frame-margin: 1rem;
+    --app-shell-gap-x: 1rem;
+    --app-shell-gap-y: 0.6rem;
+    --app-sidebar-width-mobile: 5.5rem;
+    --app-sidebar-width-desktop: 9.75rem;
+    --app-topbar-height: 3.5rem;
+    --app-menu-item-height: 2rem;
+    --app-menu-item-font-size: 0.68rem;
+    --app-sidebar-height: calc(100vh - (2 * var(--app-frame-margin)) - var(--app-shell-gap-y) - var(--app-topbar-height));
+  }
+
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  .app-layout {
+    width: calc(100% - 2rem);
+    min-height: calc(100vh - 2rem);
+    margin: var(--app-frame-margin) auto;
+    display: grid;
+    column-gap: var(--app-shell-gap-x);
+    row-gap: var(--app-shell-gap-y);
+    grid-template-columns: var(--app-sidebar-width-mobile) minmax(0, 1fr);
+    grid-template-areas:
+      "top top"
+      "side body";
+    align-items: start;
+  }
+
+  .app-layout--guest {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "top"
+      "body";
+  }
+
+  .app-topbar {
+    grid-area: top;
+    height: var(--app-topbar-height);
+    min-height: var(--app-topbar-height);
+    max-height: var(--app-topbar-height);
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    border-radius: var(--radius-box);
+    background: var(--color-base-100);
+    box-shadow: 0 12px 30px color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  }
+
+  .app-topbar .navbar {
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .app-sidebar {
+    grid-area: side;
+    align-self: start;
+    inline-size: 100%;
+    min-inline-size: 100%;
+    max-inline-size: 100%;
+    height: var(--app-sidebar-height);
+    min-height: var(--app-sidebar-height);
+    max-height: var(--app-sidebar-height);
+    overflow-y: auto;
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    border-radius: var(--radius-box);
+    background: var(--color-base-100);
+    box-shadow: 0 12px 30px color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  }
+
+  .app-layout__body {
+    grid-area: body;
+    display: flex;
+    flex-direction: column;
+    height: var(--app-sidebar-height);
+    min-height: var(--app-sidebar-height);
+    max-height: var(--app-sidebar-height);
+    min-width: 0;
+  }
+
+  .app-workspace {
+    flex: 1;
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    border-radius: var(--radius-box);
+    background: var(--color-base-100);
+    box-shadow: 0 12px 30px color-mix(in oklab, var(--color-base-content) 8%, transparent);
+    padding: 0.75rem;
+  }
+
+  .app-main {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%;
+  }
+
+  .app-main > * {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+  }
+
+  .app-sidebar__list {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .app-sidebar__link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: var(--app-menu-item-height);
+    height: var(--app-menu-item-height);
+    padding: 0.45rem 0.55rem;
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    border-radius: calc(var(--radius-box) - 0.15rem);
+    color: var(--color-base-content);
+    transition: background-color 120ms ease, border-color 120ms ease;
+  }
+
+  .app-sidebar__link:hover {
+    background: color-mix(in oklab, var(--color-base-content) 4%, var(--color-base-100));
+  }
+
+  .app-sidebar__link--active {
+    background: var(--color-base-content);
+    border-color: var(--color-base-content);
+    color: var(--color-base-100);
+  }
+
+  .app-sidebar__link--active svg {
+    color: inherit;
+  }
+
+  .app-sidebar__icon {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .app-sidebar__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--app-menu-item-font-size);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    .app-layout--with-sidebar {
+      grid-template-columns: var(--app-sidebar-width-desktop) minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .app-sidebar__link {
+      padding-inline: 0.5rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .app-layout {
+      width: calc(100% - 1rem);
+      min-height: calc(100vh - 1rem);
+      margin: 0.5rem auto;
+      row-gap: 0.5rem;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "top"
+        "side"
+        "body";
+    }
+
+    .app-layout--guest {
+      grid-template-areas:
+        "top"
+        "body";
+    }
+
+    .app-sidebar {
+      height: auto;
+      min-height: auto;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .app-layout__body {
+      height: auto;
+      min-height: auto;
+      max-height: none;
+    }
+
+    .app-sidebar__menu-text {
+      display: block;
+    }
+
+    .app-sidebar__list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .app-workspace {
+      height: auto;
+      min-height: auto;
+      max-height: none;
+      overflow: visible;
+    }
+  }
+</style>
+
+<header class="app-topbar">
+  <div class="navbar px-3 py-2 md:px-4">
+    <div class="navbar-start">
+      <a
+        href="index.php?page=<?= $user ? 'dashboard' : 'login' ?>"
+        class="btn btn-ghost h-auto px-2 normal-case"
+        onclick="navigateTo('<?= $user ? 'dashboard' : 'login' ?>'); return false;"
+      >
+        <div class="text-left leading-tight">
+          <div class="text-sm font-semibold text-base-content md:text-[0.95rem]">Recruitment Allocation Hub</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="navbar-end">
+      <?php if ($user): ?>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-outline btn-sm h-8 min-h-0 rounded-full px-3">
+            <span class="text-xs sm:text-sm"><?= htmlspecialchars((string) ($user['name'] ?? 'Gebruiker'), ENT_QUOTES, 'UTF-8') ?> - Ingelogd</span>
+          </div>
+
+          <ul tabindex="0" class="menu dropdown-content z-[1] mt-3 w-64 rounded-box border border-base-300 bg-base-100 p-2 shadow-xl">
+            <?php foreach ($userMenuItems as $item): ?>
+              <li>
+                <a
+                  href="<?= str_contains($item['link'], '.php') ? htmlspecialchars($item['link'], ENT_QUOTES, 'UTF-8') : 'index.php?page=' . htmlspecialchars($item['link'], ENT_QUOTES, 'UTF-8') ?>"
+                  class="<?= $currentPage === $item['link'] ? 'active' : '' ?>"
+                  onclick="navigateTo('<?= htmlspecialchars($item['link'], ENT_QUOTES, 'UTF-8') ?>'); return false;"
+                >
+                  <?= navIcon($item['label']) ?>
+                  <span><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></span>
+                </a>
+              </li>
+            <?php endforeach; ?>
           </ul>
-        </details>
-      </li>
+        </div>
       <?php else: ?>
-      <li><a href="#" onclick="navigateTo('<?php echo htmlspecialchars($item['link']); ?>'); return false;"><?php echo htmlspecialchars($item['label']); ?></a></li>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-outline btn-sm h-8 min-h-0 rounded-full px-3">
+            <span class="text-xs sm:text-sm">Gast</span>
+          </div>
+          <ul tabindex="0" class="menu dropdown-content z-[1] mt-3 w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow-xl">
+            <li>
+              <a href="index.php?page=login" onclick="navigateTo('login'); return false;">
+                <?= navIcon('Inloggen') ?>
+                <span>Inloggen</span>
+              </a>
+            </li>
+            <li>
+              <a href="index.php?page=activate" onclick="navigateTo('activate'); return false;">
+                <?= navIcon('Account activeren') ?>
+                <span>Account activeren</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       <?php endif; ?>
-      <?php endforeach; ?>
-    </ul>
+    </div>
   </div>
-  <div class="navbar-end">
-   <label class="flex cursor-pointer gap-2 items-center">
-      <!-- Sun icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"/>
-        <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>
-      </svg>
+</header>
 
-      <!-- Checkbox toggle -->
-      <input type="checkbox" id="theme-toggle" class="toggle" />
-
-      <!-- Moon icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-    </label>
-  </div>
-</div>
-
-<!-- Mobile Dock -->
-<div class="dock md:hidden">
-  <?php $allItems = getAllNavItems($items); ?>
-  <?php foreach ($allItems as $item): ?>
-  <button class="<?php echo ($item['link'] == $currentPage) ? 'dock-active' : ''; ?>" onclick="navigateTo('<?php echo htmlspecialchars($item['link']); ?>')">
-    <?php echo getNavIcon($item['label']); ?>
-    <span class="dock-label"><?php echo htmlspecialchars($item['label']); ?></span>
-  </button>
-  <?php endforeach; ?>
-</div>
+<?php if ($user): ?>
+  <aside class="app-sidebar p-2 md:p-3">
+    <div class="app-sidebar__menu-text px-2 pb-3 pt-1 text-xs font-semibold uppercase tracking-[0.22em] text-base-content/60">Menu</div>
+    <nav aria-label="Hoofdnavigatie">
+      <ul class="app-sidebar__list">
+        <?php foreach ($items as $item): ?>
+          <?php $isActive = $currentPage === $item['link']; ?>
+          <li>
+            <a
+              href="index.php?page=<?= htmlspecialchars($item['link'], ENT_QUOTES, 'UTF-8') ?>"
+              class="app-sidebar__link <?= $isActive ? 'app-sidebar__link--active' : '' ?>"
+              title="<?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?>"
+              onclick="navigateTo('<?= htmlspecialchars($item['link'], ENT_QUOTES, 'UTF-8') ?>'); return false;"
+            >
+              <span class="app-sidebar__icon"><?= navIcon($item['label']) ?></span>
+              <span class="app-sidebar__label"><?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?></span>
+            </a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </nav>
+  </aside>
+<?php endif; ?>
 
 <script>
-const htmlEl = document.documentElement;
-const toggle = document.getElementById('theme-toggle');
-
-// Load saved theme or system preference
-const savedTheme = localStorage.getItem('theme');
-if(savedTheme) {
-  htmlEl.setAttribute('data-theme', savedTheme);
-  toggle.checked = savedTheme === 'dark';
-} else {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  htmlEl.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-  toggle.checked = prefersDark;
-}
-
-// Update theme when checkbox changes
-toggle.addEventListener('change', () => {
-  const newTheme = toggle.checked ? 'dark' : 'light';
-  htmlEl.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-});
-
-// AJAX navigation function
 function navigateTo(page) {
-  // If it's already a full URL (like logout.php), use it as-is
   const url = page.includes('.php') ? page : `index.php?page=${page}`;
-  
-  // Get the full current URL for comparison
   const currentUrl = window.location.origin + window.location.pathname + window.location.search;
   const fullUrl = url.startsWith('http') ? url : window.location.origin + '/' + url;
-  
-  // Prevent navigation to current page
+
   if (fullUrl === currentUrl) {
-    console.log('Already on current page:', fullUrl);
     return;
   }
-  
-  // Handle logout links with AJAX call to API
+
   if (url.includes('logout.php')) {
     fetch('server/api/logout.php', {
       method: 'POST',
@@ -200,18 +448,14 @@ function navigateTo(page) {
         window.location.href = data.redirect || 'index.php?page=login';
       }
     })
-    .catch(error => {
-      console.error('Logout error:', error);
-      // Fallback to direct navigation
+    .catch(() => {
       window.location.href = fullUrl;
     });
     return;
   }
-  
-  // Update URL without reloading page
-  history.pushState({page: page}, '', url);
-  
-  // Fetch new content via AJAX
+
+  history.pushState({ page: page }, '', url);
+
   fetch(url, {
     headers: {
       'X-Requested-With': 'XMLHttpRequest'
@@ -224,26 +468,16 @@ function navigateTo(page) {
     return response.text();
   })
   .then(html => {
-    // Update main content area
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.innerHTML = html;
-    } else {
-      console.error('main-content element not found');
     }
-    
-    // Close any open dropdowns
-    const details = document.querySelectorAll('details');
-    details.forEach(detail => detail.removeAttribute('open'));
   })
-  .catch(error => {
-    console.error('Navigation error:', error);
-    // Fallback to regular navigation
+  .catch(() => {
     window.location.href = fullUrl;
   });
 }
 
-// Handle browser back/forward buttons
 window.addEventListener('popstate', function(event) {
   if (event.state && event.state.page) {
     navigateTo(event.state.page);

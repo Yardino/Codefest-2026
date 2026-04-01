@@ -1,6 +1,7 @@
+<?php
 // $_SESSION['notificationType'] = 'info';
 // $_SESSION['notificationMessage'] = 'Demo notification: the shared session handler is working on the login page.';
-
+?>
 <div class="w-full max-w-md">
   <div class="card bg-base-100 shadow-2xl">
     <div class="border-t-4 border-primary"></div>
