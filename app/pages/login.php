@@ -1,142 +1,320 @@
 <?php
-// $_SESSION['notificationType'] = 'info';
+// $_SESSION['notificationType'] = 'warning';
 // $_SESSION['notificationMessage'] = 'Demo notification: the shared session handler is working on the login page.';
 ?>
-<div class="w-full max-w-md">
-  <div class="card bg-base-100 shadow-2xl">
-    <div class="border-t-4 border-primary"></div>
-    <div class="card-body">
-      <h2 class="card-title text-2xl text-center justify-center mb-6">Login</h2>
-      <div id="loginMessage" class="text-sm text-error mb-3" style="display:none;"></div>
-      <form id="loginForm" method="POST" class="space-y-4">
-        <!-- Email Input -->
-        <div class="form-control w-full">
-          <label class="label">
-            <span class="label-text">Email Address</span>
-          </label>
-          <input 
-            type="email" 
-            name="email"
-            placeholder="your@email.com" 
-            class="input input-bordered input-primary w-full"
-            required 
-          />
-        </div>
-
-        <!-- Password Input -->
-        <div class="form-control w-full">
-          <label class="label">
-            <span class="label-text">Password</span>
-          </label>
-          <input 
-            type="password" 
-            name="password"
-            placeholder="••••••••" 
-            class="input input-bordered input-primary w-full"
-            required 
-          />
-          <label class="label">
-            <a href="index.php?page=forgot-password" class="label-text-alt link link-hover">Forgot password?</a>
-          </label>
-        </div>
-
-        <!-- Remember Me Checkbox -->
-        <div class="form-control">
-          <label class="label cursor-pointer">
-            <span class="label-text">Remember me</span>
-            <input 
-              type="checkbox" 
-              name="remember"
-              class="checkbox checkbox-primary" 
-            />
-          </label>
-        </div>
-
-        <!-- Submit Button -->
-        <button 
-          type="submit" 
-          class="btn btn-primary w-full"
-        >
-          Sign In
-        </button>
-      </form>
-
-      <!-- Divider -->
-      <div class="divider">OR</div>
-
-      <!-- Social Login (Optional) -->
-      <div class="space-y-2">
-        <button 
-          class="btn btn-outline w-full"
-          onclick="alert('Google login coming soon!')"
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.09H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.91l2.85-2.22.81-.62z"/>
-            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.09l3.85 2.99c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Google
-        </button>
-        <button 
-          class="btn btn-outline w-full"
-          onclick="alert('Github login coming soon!')"
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          GitHub
-        </button>
+<section class="w-full px-0 py-4 sm:px-2 sm:py-6 md:px-0 md:py-10">
+  <div class="mx-auto w-full max-w-[34rem] rounded-[1.75rem] border border-base-content/30 bg-base-100/95 px-6 py-7 shadow-xl md:px-10 md:py-8">
+    <div class="space-y-8">
+      <div class="space-y-1">
+        <h1 class="text-[1.85rem] font-semibold text-base-content">Inloggen</h1>
       </div>
 
-      <!-- Sign Up Link -->
-      <div class="card-actions justify-center mt-6">
-        <p class="text-sm text-base-content/70">
-          Don't have an account? 
-          <a href="index.php?page=register" class="link link-primary font-semibold" onclick="navigateTo('index.php?page=register')">Sign up</a>
+      <div
+        id="loginSummary"
+        class="hidden min-h-12 items-center rounded-2xl border border-base-content/25 px-4 py-3 text-[0.95rem] font-medium text-base-content/90"
+        role="alert"
+      >
+        <span id="loginSummaryText"></span>
+      </div>
+
+      <form id="loginForm" method="POST" novalidate class="space-y-5">
+        <div>
+          <label for="loginIdentifier" class="mb-2 block text-[0.86rem] font-semibold text-base-content/90">E-mail of gebruikersnaam</label>
+          <input
+            id="loginIdentifier"
+            type="text"
+            name="email"
+            autocomplete="username"
+            class="input input-bordered h-14 w-full rounded-2xl border-base-content/30 bg-transparent px-4 shadow-none focus:border-base-content/50 focus:outline-none"
+            required
+          />
+          <p id="loginIdentifierError" class="mt-2 hidden text-sm text-error"></p>
+        </div>
+
+        <div>
+          <label for="loginPassword" class="mb-2 block text-[0.86rem] font-semibold text-base-content/90">Wachtwoord</label>
+          <input
+            id="loginPassword"
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            class="input input-bordered h-14 w-full rounded-2xl border-base-content/30 bg-transparent px-4 shadow-none focus:border-base-content/50 focus:outline-none"
+            required
+          />
+          <p id="loginPasswordError" class="mt-2 hidden text-sm text-error"></p>
+        </div>
+
+        <div class="grid gap-4 pt-1 sm:grid-cols-2">
+          <button id="loginSubmit" type="submit" class="btn btn-neutral min-h-[3.35rem] w-full rounded-2xl font-semibold shadow-none">
+            Inloggen
+          </button>
+          <button id="loginCancel" type="reset" class="btn btn-outline min-h-[3.35rem] w-full rounded-2xl font-semibold shadow-none">
+            Annuleren
+          </button>
+        </div>
+      </form>
+
+      <div class="space-y-3 border-t border-base-content/15 pt-5">
+        <div class="flex flex-col gap-1 text-[0.95rem] text-base-content/70 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <span>Wachtwoord vergeten?</span>
+          <button type="button" id="resetFlowLink" class="bg-transparent p-0 text-left font-bold text-base-content hover:underline">
+            Reset
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-1 text-[0.95rem] text-base-content/70 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <span>Uitnodiging ontvangen?</span>
+          <a href="index.php?page=activate" class="font-bold text-base-content hover:underline" onclick="navigateTo('activate'); return false;">
+            Account activeren
+          </a>
+        </div>
+
+        <p class="pt-1 text-xs leading-6 text-base-content/55">
+          Beveiliging: na inloggen kan 2FA gevraagd worden.
         </p>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <script>
-async function showLoginMessage(text, isError = true) {
-  const msg = document.getElementById('loginMessage');
-  msg.textContent = text;
-  msg.style.display = 'block';
-  msg.className = isError ? 'text-sm text-error mb-3' : 'text-sm text-success mb-3';
-}
-
-async function clearLoginMessage() {
-  const msg = document.getElementById('loginMessage');
-  msg.textContent = '';
-  msg.style.display = 'none';
-}
-
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  clearLoginMessage();
-
-  const formData = new FormData(this);
-
-  const response = await fetch('server/api/login.php', {
-    method: 'POST',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest'
-    },
-    body: formData
-  });
-
-  const json = await response.json();
-  if (!json.success) {
-    showLoginMessage(json.error || 'Login failed');
+(function () {
+  const form = document.getElementById('loginForm');
+  if (!form) {
     return;
   }
 
-  showLoginMessage('Login successful! Redirecting...', false);
-  setTimeout(() => {
-    navigateTo(json.redirect || 'index.php?page=home');
-  }, 300);
-});
+  const storageKey = 'rah-login-ui-throttle';
+  const maxFailedAttempts = 5;
+  const lockDurationMs = 60 * 1000;
+  const summary = document.getElementById('loginSummary');
+  const summaryText = document.getElementById('loginSummaryText');
+  const submitButton = document.getElementById('loginSubmit');
+  const cancelButton = document.getElementById('loginCancel');
+  const resetFlowLink = document.getElementById('resetFlowLink');
+  const fields = {
+    email: {
+      input: document.getElementById('loginIdentifier'),
+      error: document.getElementById('loginIdentifierError'),
+    },
+    password: {
+      input: document.getElementById('loginPassword'),
+      error: document.getElementById('loginPasswordError'),
+    },
+  };
+
+  function setSummary(message, type = 'error') {
+    summary.className = `flex min-h-12 items-center rounded-2xl border px-4 py-3 text-[0.95rem] font-medium ${
+      type === 'success'
+        ? 'border-success/60 text-success'
+        : 'border-error/60 text-error'
+    }`;
+    summary.classList.remove('hidden');
+    summaryText.textContent = message;
+  }
+
+  function clearSummary() {
+    summary.className = 'hidden min-h-12 items-center rounded-2xl border border-base-content/25 px-4 py-3 text-[0.95rem] font-medium text-base-content/90';
+    summaryText.textContent = '';
+  }
+
+  function clearFieldErrors() {
+    Object.values(fields).forEach(({ input, error }) => {
+      input.classList.remove('input-error');
+      input.removeAttribute('aria-invalid');
+      error.textContent = '';
+      error.classList.add('hidden');
+    });
+  }
+
+  function getThrottleState() {
+    try {
+      const rawValue = window.localStorage.getItem(storageKey);
+      const parsed = rawValue ? JSON.parse(rawValue) : {};
+      return {
+        failures: Number(parsed.failures || 0),
+        lockedUntil: Number(parsed.lockedUntil || 0),
+      };
+    } catch (error) {
+      return { failures: 0, lockedUntil: 0 };
+    }
+  }
+
+  function setThrottleState(state) {
+    window.localStorage.setItem(storageKey, JSON.stringify(state));
+  }
+
+  function clearThrottleState() {
+    window.localStorage.removeItem(storageKey);
+  }
+
+  function getRemainingLockSeconds() {
+    const { lockedUntil } = getThrottleState();
+    return Math.max(0, Math.ceil((lockedUntil - Date.now()) / 1000));
+  }
+
+  function registerFailedAttempt() {
+    const state = getThrottleState();
+    const nextFailures = state.failures + 1;
+
+    if (nextFailures >= maxFailedAttempts) {
+      setThrottleState({
+        failures: 0,
+        lockedUntil: Date.now() + lockDurationMs,
+      });
+      return true;
+    }
+
+    setThrottleState({
+      failures: nextFailures,
+      lockedUntil: 0,
+    });
+    return false;
+  }
+
+  function syncLockedState() {
+    const remainingSeconds = getRemainingLockSeconds();
+    const isLocked = remainingSeconds > 0;
+
+    submitButton.disabled = isLocked;
+
+    if (isLocked) {
+      setSummary(`Je hebt meerdere keren een onjuiste combinatie ingevuld. Wacht ${remainingSeconds} seconden voordat je opnieuw probeert.`, 'error');
+      return true;
+    }
+
+    const state = getThrottleState();
+    if (state.lockedUntil && remainingSeconds === 0) {
+      clearThrottleState();
+    }
+
+    return false;
+  }
+
+  function applyFieldErrors(fieldErrors) {
+    let firstInvalidField = null;
+
+    Object.entries(fieldErrors || {}).forEach(([name, message]) => {
+      const field = fields[name];
+      if (!field) {
+        return;
+      }
+
+      field.input.classList.add('input-error');
+      field.input.setAttribute('aria-invalid', 'true');
+      field.error.textContent = message;
+      field.error.classList.remove('hidden');
+
+      if (!firstInvalidField) {
+        firstInvalidField = field.input;
+      }
+    });
+
+    if (firstInvalidField) {
+      firstInvalidField.focus();
+    }
+  }
+
+  function validateForm() {
+    const values = {
+      email: fields.email.input.value.trim(),
+      password: fields.password.input.value,
+    };
+    const fieldErrors = {};
+
+    if (!values.email) {
+      fieldErrors.email = 'Vul je e-mailadres of gebruikersnaam in.';
+    }
+
+    if (!values.password) {
+      fieldErrors.password = 'Vul je wachtwoord in.';
+    }
+
+    return fieldErrors;
+  }
+
+  async function submitLogin(event) {
+    event.preventDefault();
+    clearSummary();
+    clearFieldErrors();
+
+    if (syncLockedState()) {
+      return;
+    }
+
+    const fieldErrors = validateForm();
+    if (Object.keys(fieldErrors).length > 0) {
+      setSummary('Controleer je invoer en probeer het opnieuw.', 'error');
+      applyFieldErrors(fieldErrors);
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.classList.add('loading');
+
+    try {
+      const response = await fetch('server/api/login.php', {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new FormData(form)
+      });
+
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (error) {
+        data = {};
+      }
+
+      if (!response.ok || !data.success) {
+        const isNowLocked = registerFailedAttempt();
+        if (isNowLocked) {
+          syncLockedState();
+        } else {
+          setSummary('Deze combinatie klopt niet.', 'error');
+          applyFieldErrors({
+            email: 'Controleer deze combinatie.',
+            password: 'Controleer deze combinatie.',
+          });
+        }
+
+        return;
+      }
+
+      clearThrottleState();
+      setSummary('Inloggen gelukt. Je wordt doorgestuurd.', 'success');
+      setTimeout(() => {
+        navigateTo(data.redirect || 'index.php?page=dashboard');
+      }, 250);
+    } catch (error) {
+      setSummary('We konden je nu niet inloggen. Probeer het opnieuw.', 'error');
+    } finally {
+      submitButton.disabled = false;
+      submitButton.classList.remove('loading');
+    }
+  }
+
+  if (resetFlowLink) {
+    resetFlowLink.addEventListener('click', function () {
+      setSummary('De reset-flow wordt vanaf hier gestart zodra dit scherm is gekoppeld.', 'success');
+    });
+  }
+
+  if (cancelButton) {
+    cancelButton.addEventListener('click', function () {
+      clearSummary();
+      clearFieldErrors();
+      clearThrottleState();
+      fields.email.input.value = '';
+      fields.password.input.value = '';
+      fields.email.input.focus();
+    });
+  }
+
+  syncLockedState();
+  window.setInterval(syncLockedState, 1000);
+  form.addEventListener('submit', submitLogin);
+})();
 </script>

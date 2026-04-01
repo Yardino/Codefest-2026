@@ -376,7 +376,7 @@ if (isset($_GET['page']) && !in_array($_GET['page'], $allowedPages, true)) {
             <?php endforeach; ?>
           </ul>
         </div>
-      <?php else: ?>
+      <?php elseif ($currentPage !== 'login'): ?>
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-outline btn-sm h-8 min-h-0 rounded-full px-3">
             <span class="text-xs sm:text-sm">Gast</span>
